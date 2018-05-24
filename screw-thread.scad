@@ -8,14 +8,14 @@ module screw_thread (
     number_of_points = ceil(points_per_revolution * height / height_per_revolution) + points_per_revolution * 2;
 
     inner_points = [for(point = [0:number_of_points])[
-        sin(360 * point / points_per_revolution) * inner_radius,
-        cos(360 * point / points_per_revolution) * inner_radius,
+        sin(-360 * point / points_per_revolution) * inner_radius,
+        cos(-360 * point / points_per_revolution) * inner_radius,
         point * height_per_revolution / points_per_revolution
     ]];
 
     outer_points = [for(point = [0:number_of_points - points_per_revolution])[
-        sin(360 * point / points_per_revolution) * outer_radius,
-        cos(360 * point / points_per_revolution) * outer_radius,
+        sin(-360 * point / points_per_revolution) * outer_radius,
+        cos(-360 * point / points_per_revolution) * outer_radius,
         point * height_per_revolution / points_per_revolution + height_per_revolution / 2
     ]];
 
@@ -26,27 +26,27 @@ module screw_thread (
 
     lower_faces_a = [for(point = [0:number_of_points - points_per_revolution - 1])[
         point,
-        point + 1,
-        point + number_of_points + 2
+        point + number_of_points + 2,
+        point + 1
     ]];
 
     lower_faces_b = [for(point = [0:number_of_points - points_per_revolution - 1])[
+        point + number_of_points + 1,    
         point + number_of_points + 2,    
-        point + number_of_points + 1,
         point
     ]];
 
     lower_faces = concat(lower_faces_a, lower_faces_b);
 
     upper_faces_a = [for(point = [0:number_of_points - points_per_revolution - 1])[
-        point + points_per_revolution + 1,    
         point + points_per_revolution,
+        point + points_per_revolution + 1,    
         point + number_of_points + 1
     ]];
 
     upper_faces_b = [for(point = [0:number_of_points - points_per_revolution - 1])[
-        point + number_of_points + 1,    
         point + number_of_points + 2,
+        point + number_of_points + 1,    
         point + points_per_revolution + 1
     ]];
 
@@ -54,27 +54,27 @@ module screw_thread (
 
     lower_cap_faces = [for(point = [0:points_per_revolution - 1]) [
         2 + number_of_points + number_of_points - points_per_revolution,
-        point + 1,
-        point
+        point,
+        point + 1
     ]];
 
     lower_cap_to_side_faces = [[
-        0,
+        points_per_revolution,    
         number_of_points + 1,
-        points_per_revolution,
+        0,    
         2 + number_of_points + number_of_points - points_per_revolution
     ]];
 
     upper_cap_faces = [for(point = [0:points_per_revolution - 1]) [
         3 + number_of_points + number_of_points - points_per_revolution,
-        number_of_points - points_per_revolution + point,
-        number_of_points - points_per_revolution + point + 1
+        number_of_points - points_per_revolution + point + 1,
+        number_of_points - points_per_revolution + point
     ]];
 
     upper_cap_to_side_faces = [[
-        number_of_points,
-        1 + number_of_points + number_of_points - points_per_revolution,
         number_of_points - points_per_revolution,
+        1 + number_of_points + number_of_points - points_per_revolution,
+        number_of_points,    
         3 + number_of_points + number_of_points - points_per_revolution
     ]];
 
