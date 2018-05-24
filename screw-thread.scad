@@ -5,7 +5,7 @@ module screw_thread (
     inner_radius,
     outer_radius
 ) {
-    number_of_points = ceil(points_per_revolution * height / height_per_revolution);
+    number_of_points = ceil(points_per_revolution * height / height_per_revolution) + points_per_revolution * 2;
 
     inner_points = [for(point = [0:number_of_points])[
         sin(360 * point / points_per_revolution) * inner_radius,
@@ -21,7 +21,7 @@ module screw_thread (
 
     points = concat(inner_points, outer_points, [
         [0, 0, 0],
-        [0, 0, height]
+        [0, 0, height + height_per_revolution * 2]
     ]);
 
     lower_faces_a = [for(point = [0:number_of_points - points_per_revolution - 1])[
@@ -87,7 +87,19 @@ module screw_thread (
         upper_cap_to_side_faces
     );
 
-    polyhedron(points = points, faces = faces);
+    intersection() {
+        translate([0, 0, height / 2]) {
+            cube([
+                outer_radius * 2, 
+                outer_radius * 2,
+                height
+            ], center = true);
+        };
+        
+        translate([0, 0, -height_per_revolution]) {
+            polyhedron(points = points, faces = faces);
+        };
+    };
 }
 
 screw_thread(8, 3, 100, 7, 8);
