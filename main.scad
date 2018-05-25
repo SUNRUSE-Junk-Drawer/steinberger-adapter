@@ -34,9 +34,14 @@ screw_hole_tolerance = 0.4;
 screw_points_per_revolution = 24;
 screw_height_per_revolution = 1.5;
 
-screw_plate_margin = 3;
+screw_plate_margin = 1.5;
 screw_plate_radius = string_spacing / 2 + screw_plate_margin;
-screw_plate_height = string_bend_radius + screw_height;
+screw_plate_height = string_bend_radius + screw_height - channel_radius;
+screw_plate_points = 32;
+
+screw_notch_width = 3.5;
+screw_notch_height = 1;
+screw_notch_depth = 2.5;
 
 translate([0, 0, truss_plug_vertical]) {
     rotate([90, 0, 0]) {
@@ -68,71 +73,151 @@ translate([screw_plug_spacing / 2, 0, screw_plug_vertical]) {
     };
 };
 
-intersection() {
-    rotate([90, 0, 0]) {
-        cylinder(
-            d = width,
-            h = width,
-            center = true,
-            $fn = neck_points
-        );
-    };
+difference() {
     union() {
         intersection() {
-            translate([
-                width / -2, 
-                0,
-                -string_bend_radius
-            ]) {
-                cube([
-                    width, string_bend_radius, string_bend_radius * 2]);
+            rotate([90, 0, 0]) {
+                cylinder(
+                    d = width,
+                    h = width,
+                    center = true,
+                    $fn = neck_points
+                );
             };
-            
-            difference() {
-                rotate([0, 90, 0]) {
-                    rotate([0, 0, -kick_angle]) {
-                        cylinder(
-                            r = string_bend_radius, 
-                            h = width, 
-                            center = true, 
-                            $fn = string_bend_points
-                        );
+            union() {
+                intersection() {
+                    translate([
+                        width / -2, 
+                        0,
+                        -string_bend_radius
+                    ]) {
+                        cube([
+                            width, string_bend_radius, string_bend_radius * 2]);
                     };
-                };
-
-                for (x = [furthest_channel_width / -2:string_spacing:furthest_channel_width / 2]) {
-                    translate([x, 0, 0]) {
+                    
+                    difference() {
                         rotate([0, 90, 0]) {
                             rotate([0, 0, -kick_angle]) {
-                                torus(
-                                    string_bend_radius - channel_radius,
-                                    string_bend_radius + channel_radius,
-                                    string_bend_points,
-                                    channel_points
+                                cylinder(
+                                    r = string_bend_radius, 
+                                    h = width, 
+                                    center = true, 
+                                    $fn = string_bend_points
                                 );
+                            };
+                        };
+
+                        for (x = [furthest_channel_width / -2:string_spacing:furthest_channel_width / 2]) {
+                            translate([x, 0, 0]) {
+                                rotate([0, 90, 0]) {
+                                    rotate([0, 0, -kick_angle]) {
+                                        torus(
+                                            string_bend_radius - channel_radius,
+                                            string_bend_radius + channel_radius,
+                                            string_bend_points,
+                                            channel_points
+                                        );
+                                    };
+                                };
                             };
                         };
                     };
                 };
-            };
-        };
 
-        rotate([-kick_angle, 0, 0]) {
-            difference() {
-                translate([width / -2, 0, -width]) {
-                    cube([width, string_bend_radius, width]);
-                };
-                
-                for (x = [furthest_channel_width / -2:string_spacing:furthest_channel_width / 2]) {
-                    translate([x, string_bend_radius, -width]) {            
-                        cylinder(
-                            r = channel_radius, 
-                            h = width, 
-                            $fn = channel_points
-                        );
+                rotate([-kick_angle, 0, 0]) {
+                    translate([width / -2, 0, -width]) {
+                        cube([width, string_bend_radius, width]);
                     };
                 };
             };
         };
+        
+        rotate([-kick_angle, 0, 0]) {
+            translate([
+                -furthest_channel_width / 2,
+                screw_plate_height,
+                -screw_plate_radius
+            ]) {                        
+                rotate([90, 0, 0]) {
+                    cylinder(
+                        r = screw_plate_radius,
+                        h = screw_plate_height,
+                        $fn = screw_plate_points
+                    );
+                };
+            };
+            
+            translate([
+                furthest_channel_width / 2,
+                screw_plate_height,
+                -screw_plate_radius
+            ]) {                        
+                rotate([90, 0, 0]) {
+                    cylinder(
+                        r = screw_plate_radius,
+                        h = screw_plate_height,
+                        $fn = screw_plate_points
+                    );
+                };
+            };
+            
+            translate([
+                furthest_channel_width / -2,
+                0,
+                screw_plate_radius * -2
+            ]) {
+                cube([
+                    furthest_channel_width,
+                    screw_plate_height,    
+                    screw_plate_radius * 2
+                ]);
+            };
+        };
+    };
+    
+    rotate([-kick_angle, 0, 0]) {
+        for (x = [furthest_channel_width / -2:string_spacing:furthest_channel_width / 2]) {
+            translate([x, string_bend_radius - channel_radius, -screw_plate_radius]) {
+                rotate([-90, 0, 0]) {
+                    screw_thread(
+                        screw_points_per_revolution,
+                        screw_height_per_revolution,
+                        screw_height + 1 /* Fixes a minor tolerance problem. */,
+                        screw_radius + screw_hole_tolerance - screw_thread_depth,
+                        screw_radius + screw_hole_tolerance
+                    );
+                };
+            };
+            
+            translate([x, string_bend_radius, -width]) {            
+                cylinder(
+                    r = channel_radius, 
+                    h = width, 
+                    $fn = channel_points
+                );
+            };
+        };
     };
 };
+
+for (x = [furthest_channel_width / -2:string_spacing:furthest_channel_width / 2]) {
+    translate([x, 10, -20]) {
+        difference() {
+            screw_thread(
+                screw_points_per_revolution,
+                screw_height_per_revolution,
+                screw_height,
+                screw_radius - screw_thread_depth,
+                screw_radius
+            );
+            
+            translate([
+                screw_notch_width / -2,
+                screw_notch_height / -2,
+                screw_height - screw_notch_depth
+            ]) {
+                cube([screw_notch_width, screw_notch_height, screw_notch_depth]);
+            };
+        };
+    };
+}
