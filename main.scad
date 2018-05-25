@@ -7,13 +7,13 @@ string_spacing = 7;
 number_of_strings = 6;
 
 string_bend_radius = 4;
-string_bend_points = 16;
+string_bend_points = 24;
 
 channel_radius = 1;
-channel_points = 8;
+channel_points = 12;
 
 kick_angle = 15.945;
-neck_points = 32;
+neck_points = 64;
 
 truss_plug_radius = 4.04;
 truss_plug_length = 5.31;
