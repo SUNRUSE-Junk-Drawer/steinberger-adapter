@@ -1,6 +1,8 @@
 use <torus.scad>
 use <screw-thread.scad>
 
+minimalist = false;
+
 string_spacing = 7;
 number_of_strings = 6;
 
@@ -75,48 +77,50 @@ translate([screw_plug_spacing / 2, 0, screw_plug_vertical]) {
 
 difference() {
     union() {
-        intersection() {
-            rotate([90, 0, 0]) {
-                cylinder(
-                    d = width,
-                    h = width,
-                    center = true,
-                    $fn = neck_points
-                );
-            };
-            union() {
-                intersection() {
-                    translate([
-                        width / -2, 
-                        0,
-                        -string_bend_radius
-                    ]) {
-                        cube([
-                            width, string_bend_radius, string_bend_radius * 2]);
-                    };
-                    
-                    difference() {
-                        rotate([0, 90, 0]) {
-                            rotate([0, 0, -kick_angle]) {
-                                cylinder(
-                                    r = string_bend_radius, 
-                                    h = width, 
-                                    center = true, 
-                                    $fn = string_bend_points
-                                );
-                            };
+        if (!minimalist) {
+            intersection() {
+                rotate([90, 0, 0]) {
+                    cylinder(
+                        d = width,
+                        h = width,
+                        center = true,
+                        $fn = neck_points
+                    );
+                };
+                union() {
+                    intersection() {
+                        translate([
+                            width / -2, 
+                            0,
+                            -string_bend_radius
+                        ]) {
+                            cube([
+                                width, string_bend_radius, string_bend_radius * 2]);
                         };
+                        
+                        difference() {
+                            rotate([0, 90, 0]) {
+                                rotate([0, 0, -kick_angle]) {
+                                    cylinder(
+                                        r = string_bend_radius, 
+                                        h = width, 
+                                        center = true, 
+                                        $fn = string_bend_points
+                                    );
+                                };
+                            };
 
-                        for (x = [furthest_channel_width / -2:string_spacing:furthest_channel_width / 2]) {
-                            translate([x, 0, 0]) {
-                                rotate([0, 90, 0]) {
-                                    rotate([0, 0, -kick_angle]) {
-                                        torus(
-                                            string_bend_radius - channel_radius,
-                                            string_bend_radius + channel_radius,
-                                            string_bend_points,
-                                            channel_points
-                                        );
+                            for (x = [furthest_channel_width / -2:string_spacing:furthest_channel_width / 2]) {
+                                translate([x, 0, 0]) {
+                                    rotate([0, 90, 0]) {
+                                        rotate([0, 0, -kick_angle]) {
+                                            torus(
+                                                string_bend_radius - channel_radius,
+                                                string_bend_radius + channel_radius,
+                                                string_bend_points,
+                                                channel_points
+                                            );
+                                        };
                                     };
                                 };
                             };
