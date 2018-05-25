@@ -126,11 +126,11 @@ difference() {
                             };
                         };
                     };
-                };
-
-                rotate([-kick_angle, 0, 0]) {
-                    translate([width / -2, 0, -width]) {
-                        cube([width, string_bend_radius, width]);
+                    
+                    rotate([-kick_angle, 0, 0]) {
+                        translate([width / -2, 0, -width]) {
+                            cube([width, string_bend_radius, width]);
+                        };
                     };
                 };
             };
