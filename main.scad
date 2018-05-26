@@ -29,7 +29,7 @@ screw_plug_vertical = -3.8;
 width = string_spacing * number_of_strings;
 furthest_channel_width = string_spacing * (number_of_strings - 1);
 
-screw_height = 5;
+screw_height = 8;
 screw_radius = 3;
 screw_thread_depth = 1;
 screw_hole_tolerance = 0.4;
