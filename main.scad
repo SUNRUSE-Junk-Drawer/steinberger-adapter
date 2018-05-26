@@ -35,6 +35,10 @@ screw_thread_depth = 1;
 screw_hole_tolerance = 0.4;
 screw_points_per_revolution = 24;
 screw_height_per_revolution = 1.5;
+screw_taper_height = 0.5;
+screw_taper_radius = 2;
+screw_hole_taper_height = 1;
+screw_hole_taper_radius = 0;
 
 screw_plate_margin = 1.5;
 screw_plate_radius = string_spacing / 2 + screw_plate_margin;
@@ -190,6 +194,15 @@ difference() {
                         screw_radius + screw_hole_tolerance - screw_thread_depth,
                         screw_radius + screw_hole_tolerance
                     );
+                    
+                    translate([0, 0, screw_height - screw_hole_taper_height]) {
+                    cylinder(
+                        r1 = screw_radius + screw_hole_tolerance - screw_thread_depth,
+                        r2 = screw_radius + screw_hole_tolerance + screw_hole_taper_radius,
+                        h = screw_hole_taper_height + 0.0001,  /* Fixes a minor tolerance problem. */
+                        $fn = screw_points_per_revolution
+                    );
+                    };
                 };
             };
             
@@ -207,13 +220,31 @@ difference() {
 for (x = [furthest_channel_width / -2:string_spacing:furthest_channel_width / 2]) {
     translate([x, 10, -20]) {
         difference() {
-            screw_thread(
-                screw_points_per_revolution,
-                screw_height_per_revolution,
-                screw_height,
-                screw_radius - screw_thread_depth,
-                screw_radius
-            );
+            intersection() {
+                union() {
+                    cylinder(
+                        r1 = screw_radius - screw_taper_radius, 
+                        r2 = screw_radius, 
+                        h = screw_taper_height,
+                        $fn = screw_points_per_revolution
+                    );
+                    translate([0, 0, screw_taper_height]) {
+                        cylinder(
+                            r = screw_radius, 
+                            h = screw_height - screw_taper_height,
+                            $fn = screw_points_per_revolution
+                        );
+                    };
+                }
+                
+                screw_thread(
+                    screw_points_per_revolution,
+                    screw_height_per_revolution,
+                    screw_height,
+                    screw_radius - screw_thread_depth,
+                    screw_radius
+                );
+            };
             
             translate([
                 screw_notch_width / -2,
