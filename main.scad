@@ -45,38 +45,38 @@ screw_notch_width = 3.5;
 screw_notch_height = 1;
 screw_notch_depth = 2.5;
 
-translate([0, 0, truss_plug_vertical]) {
-    rotate([90, 0, 0]) {
-        cylinder(
-            r = truss_plug_radius,
-            h = truss_plug_length,
-            $fn = truss_plug_points
-        );
-    };
-};
-
-translate([screw_plug_spacing / -2, 0, screw_plug_vertical]) {
-    rotate([90, 0, 0]) {
-        cylinder(
-            r = screw_plug_radius,
-            h = screw_plug_length,
-            $fn = screw_plug_points
-        );
-    };
-};
-
-translate([screw_plug_spacing / 2, 0, screw_plug_vertical]) {
-    rotate([90, 0, 0]) {
-        cylinder(
-            r = screw_plug_radius,
-            h = screw_plug_length,
-            $fn = screw_plug_points
-        );
-    };
-};
-
 difference() {
     union() {
+        translate([0, 0, truss_plug_vertical]) {
+            rotate([90, 0, 0]) {
+                cylinder(
+                    r = truss_plug_radius,
+                    h = truss_plug_length,
+                    $fn = truss_plug_points
+                );
+            };
+        };
+
+        translate([screw_plug_spacing / -2, 0, screw_plug_vertical]) {
+            rotate([90, 0, 0]) {
+                cylinder(
+                    r = screw_plug_radius,
+                    h = screw_plug_length,
+                    $fn = screw_plug_points
+                );
+            };
+        };
+
+        translate([screw_plug_spacing / 2, 0, screw_plug_vertical]) {
+            rotate([90, 0, 0]) {
+                cylinder(
+                    r = screw_plug_radius,
+                    h = screw_plug_length,
+                    $fn = screw_plug_points
+                );
+            };
+        };
+        
         if (!minimalist) {
             intersection() {
                 rotate([90, 0, 0]) {
