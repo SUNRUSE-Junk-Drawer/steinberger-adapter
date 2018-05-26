@@ -21,7 +21,7 @@ truss_plug_points = 24;
 truss_plug_vertical = -4.5;
 
 screw_plug_radius = 3.43;
-screw_plug_length = 4.2;
+screw_plug_length = 2.4;
 screw_plug_points = 20;
 screw_plug_spacing = 20;
 screw_plug_vertical = -3.8;
